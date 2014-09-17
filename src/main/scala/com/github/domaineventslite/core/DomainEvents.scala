@@ -2,16 +2,26 @@ package com.github.domaineventslite.core
 
 import scala.collection.mutable.ListBuffer
 
-object DomainEvents {
-  private val subscribers = ListBuffer[Function1[Any, Unit]]()
+class DomainEvents {
+  private val subscribers = ListBuffer[(Any) => Unit]()
 
-  def subscribe(subscriber: Function1[Any, Unit]): Unit = {
+  def subscribe(subscriber: (Any) => Unit): Unit = {
     subscribers.append(subscriber)
   }
 
   def raise(events: Any*): Unit = {
-    subscribers.toList.foreach(subsriber => events.toIterator.foreach(event => subsriber.apply(event)))
-
+    subscribers.toList.foreach(subscriber => {
+      println(subscriber)
+      events.toIterator.foreach(event => subscriber.apply(event))
+    })
   }
 
+}
+
+object DomainEvents {
+  private val singleton = new DomainEvents()
+
+  def instance(): DomainEvents = {
+    singleton
+  }
 }
