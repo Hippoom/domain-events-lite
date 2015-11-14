@@ -6,8 +6,4 @@
 build
 .gradle
 
-#osx
-.DS_Store
-
 #local
-application-dev.yml
