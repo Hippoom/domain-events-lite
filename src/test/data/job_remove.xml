@@ -1,0 +1,11 @@
+<dataset>
+    <given>
+        <t_job id="match" version="2" status="IN_PROGRESS" scheduled_at="2015-11-08 22:14:19"/>
+    </given>
+
+    <then>
+        <modified pk="id">
+            <t_job id="match" version="3" status="DONE"/>
+        </modified>
+    </then>
+</dataset>
