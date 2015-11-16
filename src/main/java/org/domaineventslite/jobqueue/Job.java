@@ -22,6 +22,9 @@ public class Job {
     @Column(name = "scheduled_at")
     private Date scheduledAt;
 
+    @Transient
+    private Object context;
+
     public Job(String id) {
         this.id = id;
     }
@@ -40,6 +43,14 @@ public class Job {
 
     public int getVersion() {
         return version;
+    }
+
+    public Object getContext() {
+        return context;
+    }
+
+    protected void attach(Object context) {
+        this.context = context;
     }
 
 
