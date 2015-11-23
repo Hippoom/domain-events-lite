@@ -22,8 +22,11 @@ public class Job {
     @Column(name = "scheduled_at")
     private Date scheduledAt;
 
-    @Transient
-    private Object context;
+    @Column(name = "context_type")
+    private String contextType;
+
+    @Lob
+    private String context;
 
     public Job(String id) {
         this.id = id;
@@ -50,7 +53,12 @@ public class Job {
     }
 
     protected void attach(Object context) {
-        this.context = context;
+        this.context = context.toString();
+        this.contextType = context.getClass().getName();
+    }
+
+    public String getContextType() {
+        return contextType;
     }
 
 

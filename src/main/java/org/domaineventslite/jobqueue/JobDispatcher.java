@@ -14,7 +14,12 @@ public class JobDispatcher implements JobHandler {
     }
 
     private JobHandler getJobHandlerFor(Job job) {
-        Class<?> jobContextType = job.getContext().getClass();
+        Class<?> jobContextType = null;
+        try {
+            jobContextType = Class.forName(job.getContextType());
+        } catch (ClassNotFoundException e) {
+            return deadLetterJobHandler;
+        }
         JobHandler handlerMaybe = getJobHandler(jobContextType);
         return handlerMaybe == null ? deadLetterJobHandler : handlerMaybe;
     }
