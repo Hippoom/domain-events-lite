@@ -48,7 +48,7 @@ public class Job {
         return version;
     }
 
-    public Object getContext() {
+    public String getContext() {
         return context;
     }
 

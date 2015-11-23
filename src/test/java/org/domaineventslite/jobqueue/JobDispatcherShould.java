@@ -64,10 +64,6 @@ public class JobDispatcherShould {
 
     }
 
-    public static class FooContext {
-
-    }
-
     public static class SomeContextWeDontKnow {
 
     }
