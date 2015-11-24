@@ -1,7 +1,6 @@
 package org.dbaaq;
 
 import org.dbaaq.domain.*;
-import org.dbaaq.domain.FooContext;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -42,7 +41,7 @@ public class JobWorkerShould {
 
         when(jobStore.markInProgress(pending)).thenReturn(of(inProgress));
 
-        when(serializer.deserialize(FooContext.class, pending.getContext())).
+        when(serializer.deserialize(refEq(new SerializedObject(FooContext.class.getTypeName(), pending.getContext())))).
                 thenReturn(context);
 
         subject.process();

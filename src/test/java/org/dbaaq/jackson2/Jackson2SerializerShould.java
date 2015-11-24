@@ -1,8 +1,9 @@
 package org.dbaaq.jackson2;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.dbaaq.domain.SerializationException;
 import org.dbaaq.domain.FooContext;
+import org.dbaaq.domain.SerializationException;
+import org.dbaaq.domain.SerializedObject;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -22,7 +23,7 @@ public class Jackson2SerializerShould {
 
     @Test
     public void deserialize() {
-        FooContext actual = subject.deserialize(FooContext.class, "{\"bar\":\"bar\"}");
+        FooContext actual = subject.deserialize(new SerializedObject(FooContext.class.getTypeName(), "{\"bar\":\"bar\"}"));
 
         assertThat(actual.getBar(), is("bar"));
     }
@@ -31,7 +32,7 @@ public class Jackson2SerializerShould {
     public void throwsSerializationException_whenDeserialize_givenUnrecognizedRepresentation() {
         thrown.expect(SerializationException.class);
 
-        subject.deserialize(FooContext.class, "{");
+        subject.deserialize(new SerializedObject(FooContext.class.getTypeName(), "{"));
     }
 
 }

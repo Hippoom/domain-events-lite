@@ -1,9 +1,6 @@
 package org.dbaaq;
 
-import org.dbaaq.domain.Job;
-import org.dbaaq.domain.JobHandler;
-import org.dbaaq.domain.JobStore;
-import org.dbaaq.domain.Serializer;
+import org.dbaaq.domain.*;
 
 import java.util.Optional;
 
@@ -19,12 +16,7 @@ public class JobWorker {
         jobOptional.ifPresent(pending -> {
             Optional<Job> inProgressOptional = jobStore.markInProgress(pending);
             inProgressOptional.ifPresent(inProgress -> {
-                try {
-                    jobHandler.handle(serializer.deserialize(
-                            Class.forName(inProgress.getContextType(), true, getClass().getClassLoader()), inProgress.getContext()));
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                }
+                jobHandler.handle(serializer.deserialize(new SerializedObject(inProgress.getContextType(), inProgress.getContext())));
                 jobStore.markDone(inProgress);
             });
         });
