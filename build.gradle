@@ -37,6 +37,7 @@ repositories {
 dependencies {
     provided 'org.projectlombok:lombok:1.14.8'
 
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.6.3'//needed by jackson2 serializer
 
     compile "org.springframework:spring-context:${springVersion}"
     compile "org.springframework:spring-orm:${springVersion}"

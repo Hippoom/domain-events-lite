@@ -1,5 +1,7 @@
-package org.domaineventslite.jobqueue;
+package org.dbaaq;
 
+import org.dbaaq.domain.*;
+import org.dbaaq.domain.FooContext;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -19,7 +21,11 @@ public class JobWorkerShould {
     private JobStore jobStore;
 
     @Mock
+    private Serializer serializer;
+
+    @Mock
     private JobHandler jobHandler;
+    private final FooContext context = new FooContext();
 
     @Before
     public void setUp() throws Exception {
@@ -27,7 +33,7 @@ public class JobWorkerShould {
     }
 
     @Test
-    public void publishJob() {
+    public void dispatchDeserializedJobContext() {
         Job pending = new JobFixture().build();
 
         when(jobStore.nextPending()).thenReturn(of(pending));
@@ -36,11 +42,14 @@ public class JobWorkerShould {
 
         when(jobStore.markInProgress(pending)).thenReturn(of(inProgress));
 
+        when(serializer.deserialize(FooContext.class, pending.getContext())).
+                thenReturn(context);
+
         subject.process();
 
-        verify(jobHandler).handle(inProgress);
+        verify(jobHandler).handle(context);
 
-        verify(jobStore).remove(inProgress);
+        verify(jobStore).markDone(inProgress);
     }
 
     @Test

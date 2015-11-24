@@ -1,4 +1,4 @@
-package org.domaineventslite.jobqueue;
+package org.dbaaq.domain;
 
 import java.util.Optional;
 
@@ -8,5 +8,5 @@ public interface JobStore {
 
     Optional<Job> markInProgress(Job pending);
 
-    void remove(Job job);
+    void markDone(Job job);
 }

@@ -1,4 +1,4 @@
-package org.domaineventslite.jobqueue;
+package org.dbaaq.domain;
 
 import lombok.Getter;
 

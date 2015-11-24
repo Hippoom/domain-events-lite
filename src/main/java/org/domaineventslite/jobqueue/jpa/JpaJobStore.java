@@ -1,7 +1,7 @@
 package org.domaineventslite.jobqueue.jpa;
 
-import org.domaineventslite.jobqueue.Job;
-import org.domaineventslite.jobqueue.JobStore;
+import org.dbaaq.domain.Job;
+import org.dbaaq.domain.JobStore;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,8 +54,8 @@ public class JpaJobStore implements JobStore {
     }
 
     @Override
-    public void remove(Job job) {
+    public void markDone(Job job) {
         Job inProgress = entityManager.find(Job.class, job.getId());
-        inProgress.markDone();
+        //inProgress.markDone();
     }
 }
