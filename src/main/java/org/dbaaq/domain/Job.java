@@ -1,30 +1,22 @@
 package org.dbaaq.domain;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
-import static lombok.AccessLevel.PRIVATE;
+import static org.dbaaq.domain.Job.Status.PENDING;
 
-@NoArgsConstructor(access = PRIVATE)
 @Getter
 public class Job {
     private String id;
 
-    private int version = 1;
+    private int version;
 
-    private Status status = Status.PENDING;
+    private Status status = PENDING;
 
     private Date scheduledAt;
 
-    private String contextType;
-
-    private String context;
-
-    public Job(String id) {
-        this.id = id;
-    }
+    private byte[] payload;
 
     public enum Status {
         PENDING, IN_PROGRESS, DONE

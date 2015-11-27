@@ -3,8 +3,7 @@ create table t_job (
     version INTEGER not null,
     status varchar(50) not null,
     scheduled_at TIMESTAMP not null,
-    context_type VARCHAR(255),
-    context blob,
+    payload blob,
     CONSTRAINT t_job PRIMARY KEY (id)
 );
 

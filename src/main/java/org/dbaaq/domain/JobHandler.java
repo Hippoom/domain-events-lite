@@ -1,7 +1,7 @@
 package org.dbaaq.domain;
 
-public interface JobHandler<T> {
+public interface JobHandler {
 
-    void handle(T jobContext);
+    void handle(Job job);
 
 }

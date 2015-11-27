@@ -1,4 +1,4 @@
-package org.domaineventslite.jobqueue.jpa;
+package org.dbaaq.jpa;
 
 import com.github.hippoom.springtestdbunit.dataset.GivenWhenThenFlatXmlDataSetLoader;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -8,8 +8,9 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 import com.github.springtestdbunit.annotation.ExpectedDatabase;
 import com.github.springtestdbunit.assertion.DatabaseAssertionMode;
 import org.dbaaq.domain.Job;
+import org.dbaaq.domain.JobFixture;
 import org.dbaaq.domain.JobStore;
-import org.junit.Ignore;
+import org.domaineventslite.jobqueue.jpa.DatabaseConfig;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -20,6 +21,7 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.is;
@@ -39,18 +41,21 @@ public class JpaJobStoreShould {
     private JobStore subject;
 
 
-    @DatabaseSetup("given:classpath:job_next.xml")
     @Test
-    @Ignore
     public void fetchFirstJob() {
+        LocalDateTime now = LocalDateTime.now();
+
+        subject.store(new JobFixture("1").done().scheduledAt(now).build());
+        subject.store(new JobFixture("2").inProgress().scheduledAt(now).build());
+        subject.store(new JobFixture("3").scheduledAt(now.plusSeconds(1)).build());
+        subject.store(new JobFixture("4").scheduledAt(now.plusSeconds(2)).build());
+
         Optional<Job> jobOptional = subject.nextPending();
 
-        assertThat(jobOptional.get().getId(), is("match"));
+        assertThat(jobOptional.get().getId(), is("3"));
     }
 
-    @DatabaseSetup("given:classpath:job_next_no_pending.xml")
     @Test
-    @Ignore
     public void returnsEmpty_whenFetchNext_givenNoPendingJobs() {
         Optional<Job> jobOptional = subject.nextPending();
 
@@ -61,7 +66,6 @@ public class JpaJobStoreShould {
     @ExpectedDatabase(value = "then:classpath:job_mark_in_progress.xml",
             assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED)
     @Test
-    @Ignore
     public void updateStatus_whenMarkInProgress() {
         Optional<Job> pending = subject.nextPending();
 
@@ -74,7 +78,6 @@ public class JpaJobStoreShould {
     @ExpectedDatabase(value = "then:classpath:job_mark_in_progress.xml",
             assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED)
     @Test
-    @Ignore
     public void updateStatus_whenMarkInProgressConcurrently() throws InterruptedException {
         Optional<Job> pending = subject.nextPending();
 
@@ -89,8 +92,11 @@ public class JpaJobStoreShould {
     @ExpectedDatabase(value = "then:classpath:job_remove.xml",
             assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED)
     @Test
-    @Ignore
     public void updateStatus_whenRemove() throws InterruptedException {
-        subject.markDone(new Job("match"));
+        Optional<Job> pending = subject.nextPending();
+
+        Optional<Job> jobOptional = subject.markInProgress(pending.get());
+
+        subject.markDone(jobOptional.get());
     }
 }

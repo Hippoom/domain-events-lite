@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
-@ComponentScan("org.domaineventslite.jobqueue.jpa")
+@ComponentScan("org.dbaaq.jpa")
 @EnableTransactionManagement
 @Configuration
 public class DatabaseConfig {
@@ -38,7 +38,7 @@ public class DatabaseConfig {
         LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
         factory.setJpaVendorAdapter(vendorAdapter);
         factory.setPackagesToScan(
-                "org.domaineventslite.jobqueue"
+                "org.dbaaq.jpa"
         );
         factory.setDataSource(dataSource);
         factory.afterPropertiesSet();

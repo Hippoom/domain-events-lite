@@ -1,6 +1,6 @@
 <dataset>
     <given>
-        <t_job id="match" version="2" status="IN_PROGRESS" scheduled_at="2015-11-08 22:14:19"/>
+        <t_job id="match" version="1" status="PENDING" scheduled_at="2015-11-08 22:14:19"/>
     </given>
 
     <then>

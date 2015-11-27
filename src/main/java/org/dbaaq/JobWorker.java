@@ -1,6 +1,8 @@
 package org.dbaaq;
 
-import org.dbaaq.domain.*;
+import org.dbaaq.domain.Job;
+import org.dbaaq.domain.JobHandler;
+import org.dbaaq.domain.JobStore;
 
 import java.util.Optional;
 
@@ -8,7 +10,6 @@ import java.util.Optional;
 public class JobWorker {
 
     private JobStore jobStore;
-    private Serializer serializer;
     private JobHandler jobHandler;
 
     public void process() {
@@ -16,7 +17,7 @@ public class JobWorker {
         jobOptional.ifPresent(pending -> {
             Optional<Job> inProgressOptional = jobStore.markInProgress(pending);
             inProgressOptional.ifPresent(inProgress -> {
-                jobHandler.handle(serializer.deserialize(new SerializedObject(inProgress.getContextType(), inProgress.getContext())));
+                jobHandler.handle(inProgress);
                 jobStore.markDone(inProgress);
             });
         });

@@ -24,7 +24,6 @@ public class JobWorkerShould {
 
     @Mock
     private JobHandler jobHandler;
-    private final FooContext context = new FooContext();
 
     @Before
     public void setUp() throws Exception {
@@ -41,12 +40,9 @@ public class JobWorkerShould {
 
         when(jobStore.markInProgress(pending)).thenReturn(of(inProgress));
 
-        when(serializer.deserialize(refEq(new SerializedObject(FooContext.class.getTypeName(), pending.getContext())))).
-                thenReturn(context);
-
         subject.process();
 
-        verify(jobHandler).handle(context);
+        verify(jobHandler).handle(inProgress);
 
         verify(jobStore).markDone(inProgress);
     }

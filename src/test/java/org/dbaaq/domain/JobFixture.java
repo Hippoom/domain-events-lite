@@ -3,16 +3,27 @@ package org.dbaaq.domain;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
+import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.UUID;
 
+import static java.time.ZoneId.systemDefault;
+import static org.dbaaq.domain.Job.Status.DONE;
 import static org.dbaaq.domain.Job.Status.IN_PROGRESS;
 
 public class JobFixture {
 
-    private final Job job = new Job("1");
+    private final Job job = new Job();
+
 
     public JobFixture() {
-        set("contextType", FooContext.class.getCanonicalName());
-        set("context", "{\"bar\":\"bar\"}");
+        this(UUID.randomUUID().toString());
+    }
+
+    public JobFixture(String id) {
+        set("id", id);
+        setScheduledAt(new Date());
+        set("payload", "{\"bar\":\"bar\"}".getBytes());
     }
 
     private void set(String fieldName, Object value) {
@@ -24,6 +35,20 @@ public class JobFixture {
     public JobFixture inProgress() {
         mark(IN_PROGRESS);
         return this;
+    }
+
+    public JobFixture done() {
+        mark(DONE);
+        return this;
+    }
+
+    public JobFixture scheduledAt(LocalDateTime date) {
+        setScheduledAt(Date.from(date.atZone(systemDefault()).toInstant()));
+        return this;
+    }
+
+    private void setScheduledAt(Date date) {
+        set("scheduledAt", date);
     }
 
     private void mark(Job.Status status) {

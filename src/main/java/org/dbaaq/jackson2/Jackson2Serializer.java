@@ -2,12 +2,11 @@ package org.dbaaq.jackson2;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.TypeFactory;
-import org.dbaaq.domain.SerializationException;
-import org.dbaaq.domain.SerializedObject;
 import org.dbaaq.domain.Serializer;
 
 import java.io.IOException;
+
+import static org.dbaaq.domain.SerializationException.whenDeserializeGiven;
 
 public class Jackson2Serializer implements Serializer {
 
@@ -18,16 +17,11 @@ public class Jackson2Serializer implements Serializer {
     }
 
     @Override
-    public <T> T deserialize(SerializedObject serializedObject) {
+    public <T> T deserialize(Class<T> clazz, byte[] representation) {
         try {
-            return (T) objectMapper.readValue(serializedObject.getData(), classFor(serializedObject.getType()));
-        } catch (IOException | ClassNotFoundException e) {
-            throw SerializationException.whenDeserializeGiven(serializedObject, e);
-
+            return objectMapper.readValue(representation, clazz);
+        } catch (IOException e) {
+            throw whenDeserializeGiven(clazz, representation, e);
         }
-    }
-
-    private Class<?> classFor(String type) throws ClassNotFoundException {
-        return TypeFactory.defaultInstance().findClass(type);
     }
 }
