@@ -1,84 +1,45 @@
-apply plugin: 'idea'
-apply plugin: 'java'
-apply plugin: "jacoco"
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
 
-version = '0.0.1'
+version = "0.1.1"
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+subprojects {
 
-configurations {
-    provided
-}
+    apply plugin: 'java'
+    apply plugin: 'idea'
 
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
 
-sourceSets {
-    main {
-        compileClasspath += configurations.provided
+    configurations {
+        provided
     }
-    test {
-        resources {
-            srcDir 'src/test/data'
+
+    idea {
+        module {
+            scopes.PROVIDED.plus += [configurations.provided]
         }
-        compileClasspath += configurations.provided
     }
-}
 
-idea {
-    module {
-        scopes.PROVIDED.plus += [configurations.provided]
-    }
-}
-
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    provided 'org.projectlombok:lombok:1.14.8'
-
-    compile 'org.modelmapper:modelmapper:0.7.5'
-    compile 'com.fasterxml.jackson.core:jackson-databind:2.6.3'//needed by jackson2 serializer
-
-    compile "org.springframework:spring-context:${springVersion}"
-    compile "org.springframework:spring-orm:${springVersion}"
-    compile 'org.antlr:stringtemplate:4.0.2'
-
-    compile "org.springframework:spring-test:${springVersion}"
-    compile 'org.hibernate:hibernate-entitymanager:5.0.3.Final'
-    compile "org.slf4j:slf4j-api:${slf4jVersion}"
-
-    testCompile('junit:junit:4.12') {
-        exclude group: 'org.hamcrest'
-    }
-    testCompile 'org.hamcrest:hamcrest-library:1.3'
-    testCompile 'org.mockito:mockito-core:1.10.19'
-    testCompile "org.slf4j:slf4j-log4j12:${slf4jVersion}"
-    testCompile 'com.h2database:h2:1.4.190'
-    testCompile 'org.apache.commons:commons-dbcp2:2.1.1'
-    testCompile 'com.github.hippoom:spring-test-dbunit-template:0.1.1'
-}
-
-buildscript {
-
-    ext {
-        springVersion = '4.2.1.RELEASE'
-        slf4jVersion = '1.7.13'
+    sourceSets {
+        main {
+            compileClasspath += configurations.provided
+        }
+        test {
+            compileClasspath += configurations.provided
+        }
     }
 
     repositories {
         mavenCentral()
     }
-}
 
-test {
-    exclude '**/smoke/*'
-    exclude '**/feature/*'
+    dependencies {
+        provided 'org.projectlombok:lombok:1.14.8'
+    }
 
-    testLogging {
-        events "passed", "skipped", "failed", "standardOut", "standardError"
+    buildscript {
+        repositories {
+            mavenCentral()
+        }
     }
 }
-
-test.finalizedBy jacocoTestReport
-
