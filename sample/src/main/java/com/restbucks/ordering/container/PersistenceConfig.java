@@ -1,7 +1,6 @@
 package com.restbucks.ordering.container;
 
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
@@ -15,13 +14,12 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
-@ComponentScan("org.dbaaq.jpa")
 @EnableTransactionManagement
 @Configuration
 public class PersistenceConfig {
 
     @Bean
-    public DataSource dataSource() {
+    protected DataSource dataSource() {
         EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder();
         EmbeddedDatabase db = builder.setType(EmbeddedDatabaseType.H2).
                 addScript("classpath:job_queue.sql").build();
@@ -30,15 +28,15 @@ public class PersistenceConfig {
     }
 
     @Bean
-    public EntityManagerFactory entityManagerFactory(DataSource dataSource) throws Exception {
+    protected EntityManagerFactory entityManagerFactory(DataSource dataSource) throws Exception {
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         vendorAdapter.setShowSql(true);
-        vendorAdapter.setGenerateDdl(false);
+        vendorAdapter.setGenerateDdl(true);
 
         LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
         factory.setJpaVendorAdapter(vendorAdapter);
         factory.setPackagesToScan(
-                "org.dbaaq.jpa"
+                "com.restbucks.ordering"
         );
         factory.setDataSource(dataSource);
         factory.afterPropertiesSet();
@@ -46,7 +44,7 @@ public class PersistenceConfig {
     }
 
     @Bean
-    public PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) throws Exception {
+    protected PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) throws Exception {
         JpaTransactionManager txManager = new JpaTransactionManager();
         txManager.setEntityManagerFactory(entityManagerFactory);
         return txManager;

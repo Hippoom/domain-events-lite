@@ -20,20 +20,37 @@ import static org.hamcrest.Matchers.is;
 @ContextConfiguration(classes = RestbucksContainer.class)
 public class OrderPaidNotificationSendingIntegrationTest {
 
-    @Resource
-    private JobScheduler jobScheduler;
+    @Resource(name = "orderPaidNotificationJobScheduler")
+    private JobScheduler orderPaidNotificationJobScheduler;
+
+    @Resource(name = "orderReadyNotificationJobScheduler")
+    private JobScheduler orderReadyNotificationJobScheduler;
 
     @Resource
-    private OrderPaidNotificationHandler sender;
+    private OrderReadyNotificationHandler orderReadyNotificationSender;
+
+    @Resource
+    private OrderPaidNotificationHandler orderPaidNotificationSender;
 
     @Test
-    public void sendNotificationOneByOne() throws Exception {
+    public void sendPaidNotificationOneByOne() throws Exception {
         OrderPaidNotification notification1 = new OrderPaidNotification("1", 10.00);
         OrderPaidNotification notification2 = new OrderPaidNotification("2", 12.00);
 
-        jobScheduler.schedule(notification1);
-        jobScheduler.schedule(notification2);
+        orderPaidNotificationJobScheduler.schedule(notification1);
+        orderPaidNotificationJobScheduler.schedule(notification2);
 
-        await().atMost(2, SECONDS).until(() -> sender.getCount(), is(2));
+        await().atMost(2, SECONDS).until(() -> orderPaidNotificationSender.getCount(), is(2));
+    }
+
+    @Test
+    public void sendReadyNotificationOneByOne() throws Exception {
+        OrderReadyNotification notification1 = new OrderReadyNotification("1");
+        OrderReadyNotification notification2 = new OrderReadyNotification("2");
+
+        orderReadyNotificationJobScheduler.schedule(notification1);
+        orderReadyNotificationJobScheduler.schedule(notification2);
+
+        await().atMost(2, SECONDS).until(() -> orderReadyNotificationSender.getCount(), is(2));
     }
 }

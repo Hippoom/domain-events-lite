@@ -36,7 +36,7 @@ import static org.junit.Assert.assertThat;
 @DatabaseSetup(value = "classpath:all.xml", type = DatabaseOperation.DELETE_ALL)
 public class JpaJobStoreShould {
 
-    @Resource(name = "jpaJobStore")
+    @Resource(name = "defaultJpaJobStore")
     private JobStore subject;
 
 

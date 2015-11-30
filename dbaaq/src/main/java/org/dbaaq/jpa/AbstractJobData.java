@@ -8,24 +8,17 @@ import java.util.Date;
 
 import static javax.persistence.EnumType.STRING;
 
+@MappedSuperclass
 @Getter
-@Entity
-@Table(name = "t_job")
-public class JobData {
-
+public class AbstractJobData {
     @Id
     private String id;
-
     @Version
     private int version = 1;
-
     @Enumerated(value = STRING)
     private Job.Status status = Job.Status.PENDING;
-
     @Column(name = "scheduled_at")
     private Date scheduledAt;
-
     @Lob
     private byte[] payload;
-
 }
