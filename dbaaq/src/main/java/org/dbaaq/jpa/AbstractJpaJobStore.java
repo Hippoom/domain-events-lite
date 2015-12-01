@@ -62,6 +62,12 @@ public abstract class AbstractJpaJobStore<T extends AbstractJobData> implements 
         }
     }
 
+    @Transactional
+    @Override
+    public void markDead(Job inProgress, Exception exception) {
+        //TODO implement me
+    }
+
     private T findBy(String id) {
         return getEntityManager().find(getEntityClass(), id);
     }

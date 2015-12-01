@@ -3,12 +3,14 @@ package org.dbaaq.domain;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.Date;
 import java.util.UUID;
 
 import static org.dbaaq.domain.Job.Status.PENDING;
 
+@ToString(exclude = "payload")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE) // for frameworks only
 public class Job {

@@ -32,7 +32,7 @@ public class JobWorkerShould {
     }
 
     @Test
-    public void dispatchDeserializedJobContext() {
+    public void dispatchNextPendingJob() {
         Job pending = new JobFixture().build();
 
         when(jobStore.nextPending()).thenReturn(of(pending));
@@ -69,4 +69,24 @@ public class JobWorkerShould {
         verifyZeroInteractions(jobHandler);
     }
 
+    @Test
+    public void dispatchJobToDeadLetter_givenTheJobHandlerEncountersFailure() {
+        Job pending = new JobFixture().build();
+
+        when(jobStore.nextPending()).thenReturn(of(pending));
+
+        Job inProgress = new JobFixture().inProgress().build();
+
+        when(jobStore.markInProgress(pending)).thenReturn(of(inProgress));
+
+        RuntimeException failure = new RuntimeException("Oops, sth is wrong");
+
+        doThrow(failure).
+                when(jobHandler).handle(inProgress);
+
+        subject.process();
+
+        verify(jobStore).markDead(inProgress, failure);
+        verify(jobStore, never()).markDone(inProgress);
+    }
 }

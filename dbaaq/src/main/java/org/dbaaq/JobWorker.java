@@ -26,7 +26,14 @@ public class JobWorker implements Runnable {
         jobOptional.ifPresent(pending -> {
             Optional<Job> inProgressOptional = jobStore.markInProgress(pending);
             inProgressOptional.ifPresent(inProgress -> {
-                jobHandler.handle(inProgress);
+                try {
+                    jobHandler.handle(inProgress);
+                } catch (Exception e) {
+                    log.error(format("Unexpected error when handing [%s] due to %s",
+                            inProgress, e.getMessage()), e);
+                    jobStore.markDead(inProgress, e);
+                    return;
+                }
                 jobStore.markDone(inProgress);
             });
         });

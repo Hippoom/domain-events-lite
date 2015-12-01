@@ -11,4 +11,6 @@ public interface JobStore {
     Optional<Job> markInProgress(Job pending);
 
     void markDone(Job job);
+
+    void markDead(Job job, Exception failure);
 }
