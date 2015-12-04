@@ -87,15 +87,27 @@ public class JpaJobStoreShould {
         assertThat(one.isPresent() && another.isPresent(), is(false));
     }
 
-    @DatabaseSetup("given:classpath:job_remove.xml")
-    @ExpectedDatabase(value = "then:classpath:job_remove.xml",
+    @DatabaseSetup("given:classpath:job_mark_done.xml")
+    @ExpectedDatabase(value = "then:classpath:job_mark_done.xml",
             assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED)
     @Test
-    public void updateStatus_whenRemove() throws InterruptedException {
+    public void updateStatus_whenMarkDone() throws InterruptedException {
         Optional<Job> pending = subject.nextPending();
 
         Optional<Job> jobOptional = subject.markInProgress(pending.get());
 
         subject.markDone(jobOptional.get());
+    }
+
+    @DatabaseSetup("given:classpath:job_mark_dead.xml")
+    @ExpectedDatabase(value = "then:classpath:job_mark_dead.xml",
+            assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED)
+    @Test
+    public void updateStatus_whenMarkDead() throws InterruptedException {
+        Optional<Job> pending = subject.nextPending();
+
+        Optional<Job> jobOptional = subject.markInProgress(pending.get());
+
+        subject.markDead(jobOptional.get(), new RuntimeException("Oops"));
     }
 }

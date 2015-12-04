@@ -16,8 +16,7 @@ import java.util.Optional;
 
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
-import static org.dbaaq.domain.Job.Status.DONE;
-import static org.dbaaq.domain.Job.Status.IN_PROGRESS;
+import static org.dbaaq.domain.Job.Status.*;
 import static org.modelmapper.config.Configuration.AccessLevel.PRIVATE;
 
 
@@ -65,7 +64,10 @@ public abstract class AbstractJpaJobStore<T extends AbstractJobData> implements 
     @Transactional
     @Override
     public void markDead(Job inProgress, Exception exception) {
-        //TODO implement me
+        int rowUpdated = update(inProgress, DEAD);
+        if (rowUpdated != 1) {
+            throw new OptimisticLockException(inProgress);
+        }
     }
 
     private T findBy(String id) {

@@ -31,6 +31,6 @@ public class Job {
     }
 
     public enum Status {
-        PENDING, IN_PROGRESS, DONE
+        PENDING, IN_PROGRESS, DONE, DEAD
     }
 }
